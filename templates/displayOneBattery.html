@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %} Charger {% endblock %}
+
+{% block scripts %} 
+<!-- <meta http-equiv="refresh" content="5" /> -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8"> 
+
+{% endblock %}
+
+{% block styles %}
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/main.css') }}">  
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/addon_displayOneBattery.css') }}">  
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row" style="margin-top: 15px; margin-bottom:0; padding-bottom:0; margin-left:0"> 
+        <h4 style="margin:0; padding:0">Battery #{{ batt_sn }}</h4> 
+    </div> 
+
+    <div class="row" style="margin:0; padding:0">
+        <div class="table-responsive" style="margin:0; padding:0"> 
+            <table id="batt" class="table table-bordered">
+                <thead style="background-color: #f8f9fa">
+                    <tr>
+                        <th scope="col" rowspan = "2" style="border-bottom: 1px solid #000000;">#</th>
+                        <th scope="col" colspan = "4">Initial charge</th>
+                        <th scope="col" colspan = "4">Finish charge</th> 
+                        <th scope="col" rowspan = "2" style="border-bottom: 1px solid #000000;">Duration</th>
+                        <th scope="col" rowspan = "2" style="border-bottom: 1px solid #000000;">ΔSOC</th>
+                        <th scope="col" rowspan = "2" style="border-bottom: 1px solid #000000;">ChgMode</th>
+                        <th scope="col" rowspan = "2" style="border-bottom: 1px solid #000000;">Condition</th>
+                    </tr>
+                    <tr>
+                        <th scope="col">Start Time</th>
+                        <th scope="col">SOC</th>
+                        <th scope="col">SOH</th>
+                        <th scope="col">Volt</th>
+                        <th scope="col">Finish Time</th>
+                        <th scope="col">SOC</th>
+                        <th scope="col">SOH</th>
+                        <th scope="col">Volt</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for x in range (0,lenValid) %}
+                    <tr>
+                        <th scope="row"> {{ x + 1 }}</th>
+                        <td>{{ batt_data[x]['init_time'] }}</td>
+                        <td>{{ batt_data[x]['init_soc'] }}</td>
+                        <td>{{ batt_data[x]['init_soh'] }}</td>
+                        <td>{{ batt_data[x]['init_volt'] }}</td>
+                        <td>{{ batt_data[x]['fin_time'] }}</td>
+                        <td>{{ batt_data[x]['fin_soc'] }}</td>
+                        <td>{{ batt_data[x]['fin_soh'] }}</td>
+                        <td>{{ batt_data[x]['fin_volt'] }}</td> 
+                        <td>{{ batt_data[x]['delta_time'] }}</td> 
+                        <td>{{ batt_data[x]['delta_soc'] }}</td> 
+                        <td> 
+                            {% if batt_data[x]['chg_mode'] == 0 %} 
+                                Slow
+                            {% else %}
+                                Fast
+                            {% endif %} 
+                        </td> 
+                        <td>{{ batt_data[x]['condition'] }}</td> 
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div> 
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scriptBottom %} 
+<script>
+    $(document).ready(function () {
+        $('#batt').DataTable({  
+            "order": [[ 0, "desc" ]],
+            lengthMenu: [5, 10, 20, 50, 100, 200],
+            dom: '<"row"<"col-sm-6"<"toolbar1">><"col-sm-6"l>>rtp',
+            pageLength : 5, 
+            "aaSorting": []
+            }); 
+   
+
+        $("div.toolbar1").html(' <h6>Invalid charging cycles = {{ lenInvalid }}</h6> ');
+     
+        }); 
+        
+
+</script>
+{% endblock %}
